@@ -1,0 +1,43 @@
+#include <windows.h> // console
+#include <stdio.h>
+#include <conio.h> //for getch
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+	int size = 0;
+	char input[20];
+	cout << "Enter number of strings" << endl;
+	cin >> size;
+	char **pp = new char*[size]; //declaring pointer for pointers for strings
+	cout << "Starting to input strings..." << endl;
+	for (int i = 0; i < size; ++i)
+	{
+		cout << i+1 << " string" << endl;
+		cin >> input;
+		pp[i] = new char[strlen(input) + 1];  //allocating memory for a new string
+		strcpy(pp[i], input);
+	}
+	cout << "Outputting strings:" << endl;
+	for (int i = 0; i < size; i++)  
+		cout << pp[i] << endl; 
+	cout << endl;
+	char buf[20];
+	for (int i = 1; i < size; i++) {
+		for (int j = 1; j < size; j++) {
+			if (strcmpi(pp[j - 1], pp[j]) > 0) { //case insensitive comparison
+				strcpy(buf, pp[j - 1]);          // STARTING SWAP
+				strcpy(pp[j - 1], pp[j]);        
+				strcpy(pp[j], buf);              // THE END OF SWAPPING STRINGS
+			}
+		}
+	}
+	cout << "Outputting strings:" << endl;  //
+	for (int i = 0; i < size; i++)  
+		cout << pp[i] << endl;
+	getch();
+	return 0;
+}

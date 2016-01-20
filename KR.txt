@@ -1,0 +1,70 @@
+// KR.cpp: определяет точку входа для консольного приложения.
+//
+
+#include "stdafx.h"
+#include <stdio.h>
+#include <iostream>
+#include <cstring>
+#include <conio.h>
+using namespace std;
+
+struct Book {
+	char FIO[30];
+	char Title[30];
+	int Year;
+};
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	int n=5;
+	Book *mas = new Book[n];
+	char NameOfAuthor[30];
+	char bufName[20];
+	cout << "Starting input... \n";
+	for (int i=0;i<n;i++) 
+	{
+		cout << "Entering " << i + 1 << " book\n";
+		cout << "Enter the year of publishment\n";
+	    cin >> mas[i].Year;
+		//cin >> bufName;
+		cout << "Enter the name of author\n";
+		cin >> mas[i].FIO;
+		cout << "Enter the title of the book\n";
+		cin >> mas[i].Title;
+		//mas[i].FIO = new char[strlen(bufName)+1];
+		//strcpy(mas[i].FIO,bufName);
+
+	}
+
+	FILE *f;
+	f = fopen("MEM.DAT", "w+b");
+	cout << "Enter desirable name of author \n";
+	cin >> NameOfAuthor;
+	fwrite(mas, sizeof(Book),n,f);
+	rewind(f);
+	for (int i = 0; i < n; i++) {
+		Book *buf1 = new Book;
+		fread(buf1, sizeof(Book), 1, f);
+		cout << "\n-----" << i+1 << "-----\n";
+		cout << buf1->FIO << ' ';
+		cout << buf1->Year << ' ';
+		cout << '"'<<buf1->Title <<'"';
+		cout << "\n-----------";
+		delete buf1;
+	}
+	rewind(f);
+	int count = 0;
+	cout << "Starting to read from the binary file \n";
+	while (!feof(f)) {
+	 Book *buf = new Book;
+	 fread(buf,sizeof(Book),1,f);
+	 if (strcmp(NameOfAuthor, buf->FIO) == 0 && buf->Year > 1970) count++;
+	  delete buf;
+	}
+	fclose(f);
+    cout << '\n' << count << " book(s) of this author, published after 1970 year";
+	getch();
+	return 0;
+}
+

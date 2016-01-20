@@ -1,0 +1,225 @@
+﻿#include <windows.h>  // SetConsoleOutputCP, SetConsoleCP
+#include <conio.h>    // getch
+#include <iostream>
+#include <time.h>
+using namespace std;
+//function prototypes--------------------------------
+void generateArray(int n, float **A, float(*ff)(float A));
+void outputArray(int n, float **A);
+void resetArray(int n,float **A);
+void solveProblem(int n, float **A, int choice);
+float multiplicateElems(int n, float **A);
+float** switchElems(int n, float **A);
+float** reverseString(int n, float **A);
+
+
+void generateArray(int n, float **A, float(*ff)(float A))
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			//A[i][j] = rand() % 10;
+			cin >> A[i][j];
+			A[i][j] = ff(A[i][j]);
+		}
+	}
+	cout<<"Press any key to continue";
+	getch();
+	return ;
+}
+void outputArray(int n, float **A)
+{
+	for (int i = 0; i < n; i++) 
+	{
+		for (int j = 0; j < n; j++) 
+		{
+			cout << A[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	cout << "Press any key to continue";
+	getch();
+	return;
+}
+void resetArray(int n,float **A) 
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			A[i][j] = NULL;
+		}
+	}
+	
+}
+float multiplicateElems(int n, float **A) 
+{
+	float result = 1;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			result *=A[i][j];
+		}
+	}
+	
+	cout << "\nMultiplication of all elements in array = " << result;
+
+	return result;
+}
+
+float** switchElems(int n, float **A) {
+	int maxI, maxJ, firstElemNum;
+	bool Flag=true; 
+	float maxElem=A[0][0];
+	int k = 0;
+	while  (k <n && Flag) 
+	{
+		if (A[k][k] == 0) 
+		{
+			firstElemNum = k; Flag = false;
+		} 
+		k++;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+		   if (A[i][j] >= maxElem) {
+			   maxI=i;
+			   maxJ=j;
+			   maxElem = A[i][j];
+		   }
+		}
+	}
+	
+	if (!Flag)
+	{
+	  A[firstElemNum][firstElemNum] = maxElem;
+	  A[maxI][maxJ] = 0;
+	}
+	return A;
+}
+
+float** reverseString(int n, float **A) {
+   float temp;
+   for (int j = 0; j < n/2; ++j)
+   {
+      temp = A[0][j];
+      A[0][j] = A[0][n-j-1];
+      A[0][n-j-1] = temp;
+   }
+   return A;
+}
+
+float f1(float x)
+{
+	return(x + 5);
+}
+float f2(float x)
+{
+	return(x*2);
+}
+
+int main()
+{
+	srand(time(0));
+	char ch;
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
+	int n = 10, m = 10;
+	//allocate memory for dynamic array
+	float **A = new float*[n];
+	for (int i = 0; i < n; i++)
+	{
+		A[i] = new float[n];
+	}
+	float **B = new float*[m];
+	for (int i = 0; i < n; i++)
+	{
+		B[i] = new float[m];
+	}
+	float (*fun)(float x);
+
+	do {
+
+		cout << ("\n N - create new array; O - output array; S - solve the problem; \
+			     R - reset array; E - exit.\n");
+		ch = getchar();   fflush(stdin);
+		ch = toupper(ch);
+
+		switch (ch) {
+			//----------Create New Array-----------------
+		case 'N': /*if (A) {
+			cout<<"Error: reset your current array first!";
+			break;
+		}         */
+
+			cout << "\nEnter n";
+			 cin >> n;
+			cout << "\nEnter m";
+			 cin >> m;
+			 cout << "\nWhich function to apply on arrays?";
+			 char ch1;
+			 cin >> ch1;
+				 if (ch1 == '1') {  generateArray(n, A, f1); generateArray(m, B, f1);
+				 }
+				 else { fun = f2; generateArray(n, A, f2); generateArray(m, B, f2);
+				 }
+			
+			break;
+			//----------Outputting Array ----------------
+		case 'O':
+			if (A == NULL) {
+				cout << "Error: your array is empty!";
+				break;
+			}
+				if (B == NULL) {
+				cout << "Error: your array is empty!";
+				break;
+			}
+			cout << "\nArray A:\n";
+			outputArray(n, A);
+			cout << "\nArray B:\n";
+			outputArray(m, B);
+
+			break;
+			//----------Solution ------------------------
+		case 'S':
+			
+			if (multiplicateElems(n, A)<  multiplicateElems(m, B))
+			{
+				cout << "\n k<p";
+				switchElems(n, A);
+				reverseString(m, B);
+			}
+			else
+			{
+				cout << "\n k>p";
+				switchElems(m, B);
+				reverseString(n,A);
+			};
+			cout << "\nProblem solved";
+			
+			break;
+			//----------Reset Array ---------------------
+		case 'R':
+			resetArray(n,A);
+			resetArray(m,B);
+			cout << "The array was cleared\n";
+			break;
+			//-----------------------Exit----------------
+		case 'E':
+			cout << "Exiting program...";
+			return 0;
+		default:
+			cout << " Wrong command\n";
+			getch();
+		}
+	} while (ch != 'E');
+
+	return 0;
+}
+
+
